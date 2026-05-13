@@ -1,0 +1,23 @@
+# CODEOWNERS for innovation-monorepo-example
+#
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+# The last matching pattern wins. Use teams (`@org/team-name`) once you have them.
+
+# Default owner for everything not covered below
+*                              @seth-cfc
+
+# Shared infrastructure — change with extra scrutiny
+/.github/                      @seth-cfc
+/.agents/                      @seth-cfc
+/azure-pipelines.yml           @seth-cfc
+/turbo.json                    @seth-cfc
+/pnpm-workspace.yaml           @seth-cfc
+/package.json                  @seth-cfc
+
+# Workspace configs ripple across every package
+/packages/eslint-config/       @seth-cfc
+/packages/typescript-config/   @seth-cfc
+
+# Publishing surface
+/.changeset/                   @seth-cfc
+/docs/PUBLISHING.md            @seth-cfc

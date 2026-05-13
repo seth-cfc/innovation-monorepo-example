@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@repo/theming/shared";
-@import "@repo/theming/docs";
 
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../../../packages/shared/src/**/*.{ts,tsx}";

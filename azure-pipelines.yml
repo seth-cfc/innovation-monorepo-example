@@ -1,4 +1,8 @@
-# Azure Pipelines workflow for publishing packages to Azure Artifacts.
+# Azure Pipelines workflow for validating and publishing packages.
+#
+# Triggers:
+#   - `main` push: validate + publish via Changesets.
+#   - PRs into `main`: validate only (no publish).
 #
 # Prerequisites (one-time setup in Azure DevOps):
 #   1. An npm service connection pointed at the Azure Artifacts feed
@@ -18,8 +22,16 @@ trigger:
     include:
       - main
 
+pr:
+  branches:
+    include:
+      - main
+
 pool:
   vmImage: ubuntu-latest
+
+variables:
+  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 steps:
   - task: NodeTool@0
@@ -30,6 +42,12 @@ steps:
   - script: npm install -g pnpm@9
     displayName: "Install pnpm"
 
+  - script: |
+      BUN_VERSION="$(cat .bun-version)"
+      curl -fsSL https://bun.sh/install | bash -s "bun-v${BUN_VERSION}"
+      echo "##vso[task.prependpath]$HOME/.bun/bin"
+    displayName: "Install Bun (pinned to .bun-version)"
+
   - task: npmAuthenticate@0
     inputs:
       workingFile: .npmrc
@@ -38,8 +56,21 @@ steps:
   - script: pnpm install --frozen-lockfile
     displayName: "Install dependencies"
 
+  - script: pnpm format:check
+    displayName: "Check formatting"
+
+  - script: pnpm turbo run check-types
+    displayName: "Type-check"
+
+  - script: pnpm turbo run lint
+    displayName: "Lint"
+
+  - script: pnpm turbo run test
+    displayName: "Test"
+
   - script: pnpm turbo run build
     displayName: "Build"
 
   - script: pnpm changeset publish
     displayName: "Publish changed packages"
+    condition: and(succeeded(), eq(variables.IS_MAIN, true))

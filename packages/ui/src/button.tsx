@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { type ComponentPropsWithoutRef } from "react";
 import { type VariantProps } from "cva";
 import { cva } from "./cva.config";
 
@@ -24,25 +24,21 @@ export const buttonVariants = cva({
   },
 });
 
-interface ButtonProps extends VariantProps<typeof buttonVariants> {
-  children: ReactNode;
-  className?: string;
-  appName: string;
-}
+type ButtonProps = ComponentPropsWithoutRef<"button"> &
+  VariantProps<typeof buttonVariants>;
 
 export const Button = ({
-  children,
   className,
-  appName,
   intent,
   size,
+  type = "button",
+  ...rest
 }: ButtonProps) => {
   return (
     <button
+      type={type}
       className={buttonVariants({ intent, size, className })}
-      onClick={() => alert(`Hello from your ${appName} app!`)}
-    >
-      {children}
-    </button>
+      {...rest}
+    />
   );
 };

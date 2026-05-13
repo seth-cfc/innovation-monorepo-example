@@ -36,3 +36,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Agent tooling — .agents/ is the shared source of truth; per-user Claude state stays local
+.claude/settings.json
+.claude/settings.local.json

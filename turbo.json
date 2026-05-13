@@ -8,16 +8,44 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": [
+        "src/**",
+        "app/**",
+        "*.ts",
+        "*.tsx",
+        "eslint.config.*",
+        "package.json"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "inputs": [
+        "src/**",
+        "app/**",
+        "*.ts",
+        "*.tsx",
+        "tsconfig.json",
+        "package.json"
+      ]
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "inputs": [
+        "src/**",
+        "*.ts",
+        "*.tsx",
+        "vitest.config.*",
+        "vitest.setup.*",
+        "package.json"
+      ]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "compile": {
+      "inputs": ["src/**", "*.ts", "tsconfig.json", "package.json"],
       "outputs": ["dist/**"]
     }
   }

@@ -60,7 +60,11 @@ packages/
 .agents/                    Source of truth for agent config (skills, etc.)
 .claude/skills              Symlink → ../.agents/skills (so Claude Code reads it)
 .changeset/                 Changesets state
-docs/PUBLISHING.md          How to publish to Azure Artifacts
+azure-pipelines.yml         Azure Pipelines CI: validate + publish
+.github/workflows/          GitHub Actions: changeset version-PR loop
+docs/PUBLISHING.md          How to publish to Azure Artifacts (readiness matrix + patterns)
+docs/TESTING.md             Test runners, layout, what to test
+docs/CI.md                  Azure + GitHub Actions split, release flow
 turbo.json                  Pipeline definitions
 pnpm-workspace.yaml         Workspace globs
 ```
@@ -71,6 +75,7 @@ pnpm-workspace.yaml         Workspace globs
 
 - Workspace packages use the `@repo/*` scope. `private: true` until explicitly opted in for publishing.
 - **Just-in-time** is the default: `exports` point at `./src/*.ts(x)`, no build step. Only `lint` and `check-types` scripts. Do NOT add `outDir` to a JIT package's tsconfig — it triggers a `rootDir` warning.
+- **JIT is workspace-only.** External consumers without a TS-aware bundler can't import a JIT package. Before publishing `@repo/shared` or `@repo/ui` to Azure Artifacts, convert to compiled output (see [`docs/PUBLISHING.md`](docs/PUBLISHING.md) Pattern B).
 - **Explicit subpath exports** only. Avoid wildcards like `"./*": "./src/*.tsx"` — they silently break for non-`.tsx` files (e.g. `cn.ts`).
 - Internal deps use `workspace:*`: `"@repo/shared": "workspace:*"`.
 
@@ -86,7 +91,7 @@ Extend a `@repo/typescript-config/*` preset. Pick by app/package type:
 `eslint.config.mjs` is a one-line re-export. Pick by package type:
 - Plain TS → `@repo/eslint-config/base`
 - React libraries → `@repo/eslint-config/react-internal`
-- Next.js apps → `@repo/eslint-config/next`
+- Next.js apps → `@repo/eslint-config/next-js`
 
 ### UI components (`packages/ui`)
 

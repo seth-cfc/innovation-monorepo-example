@@ -79,12 +79,8 @@ export default function Home() {
         </ol>
 
         <div className="flex gap-4 flex-wrap">
-          <Button appName="docs" intent="primary">
-            Open alert
-          </Button>
-          <Button appName="docs" intent="secondary">
-            Or this one
-          </Button>
+          <Button intent="primary">Primary</Button>
+          <Button intent="secondary">Secondary</Button>
         </div>
 
         <section className="w-full flex flex-col gap-4">
@@ -93,9 +89,15 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {STACK.map((item) => (
-              <Card key={item.title} title={item.title} href={item.href}>
-                {item.description}
-              </Card>
+              <a
+                key={item.title}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Card title={item.title}>{item.description}</Card>
+              </a>
             ))}
           </div>
         </section>
