@@ -9,6 +9,6 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true
   },
-  "include": ["index.ts", "commands/**/*"],
+  "include": ["index.ts", "commands/**/*", "*.test.ts"],
   "exclude": ["node_modules", "dist"]
 }
