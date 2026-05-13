@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# web
 
-## Getting Started
-
-First, run the development server:
+The "web" app — one of two demo Next.js apps in the monorepo. Runs on **port 3000**.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm --filter web dev      # http://localhost:3000
+pnpm --filter web build
+pnpm --filter web start    # production server after build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What it demonstrates
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This app exists to prove that a shared package change in `packages/*` flows into multiple consumers. It imports:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+- `@repo/ui` — Button, Card, Code components
+- `@repo/shared` — pure utilities (`formatGreeting`, `getSharedFeatures`, …)
+- `@repo/theming` — Tailwind v4 tokens via `globals.css` (`shared` + `web` subpaths)
 
-## Learn More
+The sibling [`apps/docs`](../docs) consumes the same packages with a different theming subpath. Compare the two when wiring a new shared dependency.
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- TypeScript preset: `@repo/typescript-config/nextjs.json` (extended in [`tsconfig.json`](tsconfig.json))
+- ESLint preset: `@repo/eslint-config/next-js` (re-exported from [`eslint.config.js`](eslint.config.js))
+- PostCSS: `@repo/theming/postcss` (re-exported from [`postcss.config.js`](postcss.config.js))
+- Theme tokens: edit [`packages/theming/web.css`](../../packages/theming/web.css) for web-only tokens, [`packages/theming/shared.css`](../../packages/theming/shared.css) for tokens that affect both apps.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tailwind `@source` directives
 
-## Deploy on Vercel
+[`app/globals.css`](app/globals.css) includes:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```css
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../packages/shared/src/**/*.{ts,tsx}";
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+These are required. Without them Tailwind v4 won't scan classes inside workspace packages and styles in `@repo/ui` won't render.
+
+## Adding a route
+
+Standard Next.js App Router conventions — create `app/<route>/page.tsx`. The repo doesn't impose extra layering on top.
+
+## Publishing
+
+This app is `private: true` and stays that way. Apps are not published; only the shared `packages/*` ship to Azure Artifacts. See [`docs/PUBLISHING.md`](../../docs/PUBLISHING.md).

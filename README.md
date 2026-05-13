@@ -1,159 +1,75 @@
-# Turborepo starter
+# Innovation Monorepo Example
 
-This Turborepo starter is maintained by the Turborepo core team.
+Turborepo + pnpm monorepo demonstrating how shared packages flow between multiple apps. Two Next.js apps consume four shared packages backed by two config packages.
 
-## Using this example
+For full conventions, repo structure, and gotchas, see [`AGENTS.md`](AGENTS.md). For publishing, see [`docs/PUBLISHING.md`](docs/PUBLISHING.md).
 
-Run the following command:
+## Stack
 
-```sh
-npx create-turbo@latest
+React 19 · Next.js 16 · TypeScript 5.9 · Tailwind v4 · pnpm 9 · Turborepo 2.9 · Bun (for `@repo/cli` only).
+
+## Layout
+
+```
+apps/
+├── web/                Next.js, port 3000
+└── docs/               Next.js, port 3001
+
+packages/
+├── ui/                 React components (Button, Card, Code) + cn / cva helpers
+├── shared/             Pure utility functions and shared types
+├── theming/            Tailwind v4 design tokens (./shared, ./web, ./docs subpaths)
+├── cli/                Bun-compiled standalone CLI (@repo/cli)
+├── eslint-config/      Shared ESLint flat configs (base, react-internal, next-js)
+└── typescript-config/  Shared tsconfig presets (base, react-library, nextjs)
 ```
 
-## What's inside?
+## Getting started
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+pnpm install
+pnpm dev          # boots web (3000) and docs (3001)
 ```
 
-Without global `turbo`, use your package manager:
+Node 20+ and pnpm 9 are required. Bun is required only for `packages/cli`.
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+## Common commands
+
+```bash
+pnpm dev                      # turbo run dev
+pnpm build                    # turbo run build
+pnpm lint                     # turbo run lint
+pnpm check-types              # turbo run check-types
+pnpm format                   # prettier --write
+
+pnpm --filter <name> <cmd>    # scope to a single workspace package or app
+                              # e.g. pnpm --filter docs dev
+                              # e.g. pnpm --filter @repo/cli compile
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Versioning & publishing
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+[`docs/PUBLISHING.md`](docs/PUBLISHING.md) is the source of truth. Short version:
 
-```sh
-turbo build --filter=docs
+```bash
+pnpm changeset                # record a version bump for the current PR
+pnpm version-packages         # consume changesets, bump versions, write CHANGELOGs
+pnpm release                  # build + changeset publish
 ```
 
-Without global `turbo`:
+CI ([`azure-pipelines.yml`](azure-pipelines.yml)) runs typecheck, lint, test, build, and publish on `main`. A GitHub Actions workflow ([`.github/workflows/release.yml`](.github/workflows/release.yml)) opens the "Version Packages" PR. See [`docs/CI.md`](docs/CI.md) for the full split. Packages stay private until each one flips `private: false` and gets a real scope (the `@repo/*` prefix is a placeholder).
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Documentation map
 
-### Develop
+| Doc | Topic |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | Conventions, repo structure, gotchas. Read this first. |
+| [`docs/PUBLISHING.md`](docs/PUBLISHING.md) | How to publish to Azure Artifacts. Includes a per-package readiness matrix and the three publishing patterns (JIT, compiled, binary). |
+| [`docs/TESTING.md`](docs/TESTING.md) | Vitest vs. `bun:test`, file layout, what to test, watch mode. |
+| [`docs/CI.md`](docs/CI.md) | Azure Pipelines + GitHub Actions split, the release flow, troubleshooting. |
+| [`apps/*/README.md`](apps/) | Per-app overview (`web`, `docs`, `playground`). |
+| [`packages/*/README.md`](packages/) | Per-package API, conventions, and publishing path. |
 
-To develop all apps and packages, run the following command:
+## AI agents
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+This repo follows the [`agents.md`](https://agents.md) convention. See [`AGENTS.md`](AGENTS.md) for conventions every agent should follow. Skills live under `.agents/skills/`; `.claude/skills` symlinks to it.
