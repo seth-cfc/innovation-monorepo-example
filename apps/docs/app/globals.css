@@ -4,23 +4,3 @@
 
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../../../packages/shared/src/**/*.{ts,tsx}";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-  html {
-    color-scheme: dark;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-}

@@ -3,8 +3,29 @@
  * Every app imports @repo/theming/shared, so changes here
  * update apps/web AND apps/docs.
  */
+
 @theme {
   --color-brand-blue: #2a8af6;
   --color-brand-purple: #a853ba;
   --color-brand-red: #e92a67;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+  html {
+    color-scheme: dark;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
 }
