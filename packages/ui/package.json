@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./button": "./src/button.tsx",
+    "./card": "./src/card.tsx",
+    "./code": "./src/code.tsx",
+    "./cn": "./src/cn.ts",
+    "./cva": "./src/cva.config.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -20,7 +24,10 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
+    "cva": "1.0.0-beta.4",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^2.6.0"
   }
 }

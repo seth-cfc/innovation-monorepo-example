@@ -1,0 +1,16 @@
+{
+  "name": "@repo/theming",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./postcss": "./postcss.config.js",
+    "./shared": "./shared.css",
+    "./web": "./web.css",
+    "./docs": "./docs.css"
+  },
+  "devDependencies": {
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.5"
+  }
+}

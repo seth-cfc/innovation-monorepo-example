@@ -1,0 +1,10 @@
+/*
+ * Shared design tokens for every app in the monorepo.
+ * Every app imports @repo/theming/shared, so changes here
+ * update apps/web AND apps/docs.
+ */
+@theme {
+  --color-brand-blue: #2a8af6;
+  --color-brand-purple: #a853ba;
+  --color-brand-red: #e92a67;
+}

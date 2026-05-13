@@ -1,0 +1,9 @@
+/*
+ * Theme tokens scoped to the "docs" app only.
+ * Only apps/docs imports @repo/theming/docs, so changes here
+ * never touch apps/web.
+ */
+@theme {
+  --color-app-accent: #f97316;
+  --color-app-accent-soft: #f973161a;
+}

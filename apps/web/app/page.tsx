@@ -1,102 +1,105 @@
-import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+import { Card } from "@repo/ui/card";
+import { Code } from "@repo/ui/code";
+import {
+  formatGreeting,
+  getMonorepoTagline,
+  getSharedFeatures,
+} from "@repo/shared";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+const STACK = [
+  {
+    title: "Next.js",
+    href: "https://nextjs.org/docs",
+    description: "The React framework rendering this page.",
+  },
+  {
+    title: "Tailwind",
+    href: "https://tailwindcss.com/docs",
+    description: "Utility-first CSS, themed via @repo/theming.",
+  },
+  {
+    title: "pnpm",
+    href: "https://pnpm.io/workspaces",
+    description: "Workspace manager wiring every @repo/* package.",
+  },
+  {
+    title: "Bun",
+    href: "https://bun.com/docs",
+    description: "Runtime for the @repo/cli standalone binary.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
+    <div className="min-h-screen grid grid-rows-[20px_1fr_20px] items-center justify-items-center p-8 sm:p-20 gap-16">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start max-w-3xl w-full">
+        <div className="flex items-center gap-3">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-app-accent" />
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Innovation Monorepo
+          </h1>
+        </div>
+
+        <span className="inline-flex items-center self-start rounded-full bg-app-accent-soft text-app-accent px-3 py-1 text-xs font-medium">
+          web
+        </span>
+
+        <section className="rounded-xl border border-neutral-200 dark:border-neutral-800 border-l-4 border-l-brand-purple p-6 flex flex-col gap-3 w-full">
+          <strong className="text-base">{formatGreeting("web")}</strong>
+          <em className="opacity-70 text-sm">{getMonorepoTagline()}</em>
+          <ul className="flex flex-col gap-2 list-disc pl-5 text-sm leading-6">
+            {getSharedFeatures().map((feature) => (
+              <li key={feature.title}>
+                <strong>{feature.title}:</strong> {feature.description}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <ol className="font-mono text-sm leading-6 list-decimal list-inside">
+          <li className="mb-2">
+            Edit{" "}
+            <Code className="rounded bg-brand-red/10 text-brand-red px-1.5 py-0.5 font-semibold">
+              packages/theming/shared.css
+            </Code>{" "}
+            to change tokens used by <strong>both</strong> apps.
           </li>
-          <li>Save and see your changes instantly.</li>
+          <li className="mb-2">
+            Edit{" "}
+            <Code className="rounded bg-app-accent-soft text-app-accent px-1.5 py-0.5 font-semibold">
+              packages/theming/web.css
+            </Code>{" "}
+            to change tokens used by <strong>only this</strong> app.
+          </li>
+          <li>
+            Edit <Code>packages/shared/src/index.ts</Code> to change shared
+            logic.
+          </li>
         </ol>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+        <div className="flex gap-4 flex-wrap">
+          <Button appName="web" intent="primary">
+            Open alert
+          </Button>
+          <Button appName="web" intent="secondary">
+            Or this one
+          </Button>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
+
+        <section className="w-full flex flex-col gap-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wider opacity-60">
+            Built with
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {STACK.map((item) => (
+              <Card key={item.title} title={item.title} href={item.href}>
+                {item.description}
+              </Card>
+            ))}
+          </div>
+        </section>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
     </div>
   );
 }

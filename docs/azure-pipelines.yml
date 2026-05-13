@@ -1,0 +1,45 @@
+# Azure Pipelines workflow for publishing packages to Azure Artifacts.
+#
+# Prerequisites (one-time setup in Azure DevOps):
+#   1. An npm service connection pointed at the Azure Artifacts feed
+#      (Project Settings -> Service connections -> npm).
+#   2. The project-level .npmrc in the repo root must already contain the
+#      `@your-org:registry=...` and `always-auth=true` lines. The
+#      `npmAuthenticate@0` task injects credentials *into* that file at
+#      build time -- it doesn't create it from scratch.
+#
+# Behavior:
+#   - `pnpm changeset publish` is a no-op until at least one package flips
+#     `private: false` AND has an unreleased changeset on main. Until then
+#     this pipeline succeeds without publishing anything.
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "20.x"
+    displayName: "Use Node.js 20"
+
+  - script: npm install -g pnpm@9
+    displayName: "Install pnpm"
+
+  - task: npmAuthenticate@0
+    inputs:
+      workingFile: .npmrc
+    displayName: "Authenticate with Azure Artifacts"
+
+  - script: pnpm install --frozen-lockfile
+    displayName: "Install dependencies"
+
+  - script: pnpm turbo run build
+    displayName: "Build"
+
+  - script: pnpm changeset publish
+    displayName: "Publish changed packages"
