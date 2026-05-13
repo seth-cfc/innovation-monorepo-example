@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "@repo/theming/shared";
+
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../packages/shared/src/**/*.{ts,tsx}";
